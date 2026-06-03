@@ -1,0 +1,138 @@
+# =========================
+# Node Modules
+# =========================
+node_modules/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# Logs
+# =========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Runtime Data
+# =========================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Coverage Directory
+# =========================
+coverage/
+.nyc_output/
+
+# =========================
+# Build Folders
+# =========================
+dist/
+build/
+.next/
+out/
+
+# =========================
+# Cache Files
+# =========================
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+
+# =========================
+# OS Generated Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor Files
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Package Manager Files
+# =========================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+
+# =========================
+# Uploads / Generated Assets
+# =========================
+uploads/
+public/uploads/
+
+# =========================
+# Docker
+# =========================
+.dockerignore
+
+# =========================
+# Testing
+# =========================
+jest.config.js.snap
+*.test.js
+*.spec.js
+
+# =========================
+# PM2
+# =========================
+.pm2/
+
+# =========================
+# Firebase
+# =========================
+.firebase/
+
+# =========================
+# Vercel
+# =========================
+.vercel/
+
+# =========================
+# Railway / Render
+# =========================
+.railway/
+.render/
+
+# =========================
+# Mac / Linux Hidden Files
+# =========================
+.*.swp
+.sass-cache/
+
+# =========================
+# Secrets / Certificates
+# =========================
+*.pem
+*.key
+*.crt
+
+# =========================
+# Misc
+# =========================
+*.tgz
+*.bak
