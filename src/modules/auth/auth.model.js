@@ -24,11 +24,11 @@ const userSchema = new mongoose.Schema(
         role: {
             type: String,
             enum: [
-                
-                
-                "employer",
-                "recruiter",
-                "candidate",
+
+                "Admin",
+                "Employer",
+                "Recruiter",
+                "Candidate",
             ],
             default: "Candidate",
         },

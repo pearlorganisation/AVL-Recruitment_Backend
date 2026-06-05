@@ -1,13 +1,14 @@
 import bcrypt from "bcrypt";
 import User from "./auth.model.js";
-import {generateAccessToken, generateRefreshToken} from "../../utils/generateToken.js";
-
+import { generateAccessToken, generateRefreshToken } from "../../utils/generateToken.js";
+import jwt from "jsonwebtoken";
 
 
 //Register User
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+
 
     const existingUser = await User.findOne({ email });
 
@@ -19,6 +20,19 @@ export const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+
+    const allowedRoles = [
+      "Employer",
+      "Recruiter",
+      "Candidate",
+    ];
+
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
 
     const user = await User.create({
       name,
@@ -133,14 +147,24 @@ export const refreshAccessToken = async (
     const accessToken =
       generateAccessToken(user);
 
+    const newRefreshToken =
+      generateRefreshToken(user);
+
+    user.refreshToken =
+      newRefreshToken;
+
+    await user.save();
+
     return res.status(200).json({
       success: true,
       accessToken,
+      refreshToken: newRefreshToken,
     });
   } catch (error) {
     res.status(401).json({
       success: false,
       message: "Token expired",
+
     });
   }
 };
