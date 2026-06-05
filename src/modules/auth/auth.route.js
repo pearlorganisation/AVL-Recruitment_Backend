@@ -1,6 +1,6 @@
 import express from "express";
-import {protect} from "../../middleware/auth.middleware.js";
-import {authorizeRoles} from "../../middleware/role.middleware.js";
+import { protect } from "../../middleware/auth.middleware.js";
+import { authorizeRoles } from "../../middleware/role.middleware.js";
 import {
     registerUser,
     loginUser,
@@ -17,14 +17,14 @@ router.post("/login", loginUser);
 
 router.post("/refresh-token", refreshAccessToken);
 
-router.post("/logout", logoutUser);
+router.post("/logout",protect,logoutUser);
 
 router.get(
     "/admin",
     protect,
     authorizeRoles("Admin"),
     (req, res) => {
-        res.json({  
+        res.json({
             message: "Admin Access Granted",
         });
     }
