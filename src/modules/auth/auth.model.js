@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: [
                 
-                "Admin",
-                "Employer",
-                "Recruiter",
-                "Candidate",
+                
+                "employer",
+                "recruiter",
+                "candidate",
             ],
             default: "Candidate",
         },
