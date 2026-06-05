@@ -110,7 +110,7 @@ export const loginUser = async (req, res) => {
 };
 
 
-//Token Controller
+// Refresh and Rotate Token Controller
 export const refreshAccessToken = async (
   req,
   res
