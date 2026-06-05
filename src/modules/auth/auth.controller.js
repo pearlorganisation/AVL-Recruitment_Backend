@@ -22,9 +22,9 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const allowedRoles = [
-      "Employer",
-      "Recruiter",
-      "Candidate",
+      "employer",
+      "recruiter",
+      "candidate",
     ];
 
     if (!allowedRoles.includes(role)) {
