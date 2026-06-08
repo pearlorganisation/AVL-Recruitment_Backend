@@ -27,7 +27,7 @@ const seedAdmin = async () => {
       name: "Super Admin",
       email: process.env.ADMIN_EMAIL,
       password: hashedPassword,
-      role: "Admin",
+      role: "admin",
     });
 
     console.log("Admin seeded successfully");

@@ -2,51 +2,125 @@ import bcrypt from "bcrypt";
 import User from "./auth.model.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/generateToken.js";
 import jwt from "jsonwebtoken";
+import sendEmail from "../../utils/sendEmail.js";
+import crypto from "crypto";
 
 
 //Register User
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, } = req.body;
 
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
 
-    const existingUser = await User.findOne({ email });
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 8 characters",
+      });
+    }
+
+    const existingUser =
+      await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Email already registered",
+        message:
+          "Email already registered",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword =
+      await bcrypt.hash(password, 12);
 
-    const allowedRoles = [
-      "employer",
-      "recruiter",
-      "candidate",
-    ];
-
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid role",
-      });
-    }
+    const verificationToken =
+      crypto.randomBytes(32).toString(
+        "hex"
+      );
 
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
+      verificationToken,
+      verificationTokenExpire:
+        Date.now() + 15 * 60 * 1000,
     });
 
-    res.status(201).json({
+    const verifyUrl =
+      `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Verify Email",
+      html: `
+    <h2>Email Verification</h2>
+    <p>Please verify your email</p>
+    <a href="${verifyUrl}">
+      Verify Email
+    </a>
+  `,
+    });
+
+    return res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message:
+        "Verification email sent",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//Verify Email
+export const verifyEmail = async (
+  req,
+  res
+) => {
+  try {
+    const { token } = req.params;
+
+    const user =
+      await User.findOne({
+        verificationToken: token,
+        verificationTokenExpire: {
+          $gt: Date.now(),
+        },
+      });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid or expired token",
+      });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.verificationTokenExpire =
+      null;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Email verified successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -59,6 +133,14 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Email and password required",
+      });
+    }
+
     const user = await User.findOne({
       email,
     }).select("+password");
@@ -70,6 +152,8 @@ export const loginUser = async (req, res) => {
       });
     }
 
+
+
     const isMatch = await bcrypt.compare(
       password,
       user.password
@@ -79,6 +163,14 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid credentials",
+      });
+    }
+
+    if (!user.isVerified) {
+      return res.status(401).json({
+        success: false,
+        message:
+          "Please verify your email first",
       });
     }
 
@@ -175,11 +267,12 @@ export const logoutUser = async (
   res
 ) => {
   try {
-    const { userId } = req.body;
-
-    await User.findByIdAndUpdate(userId, {
-      refreshToken: null,
-    });
+    await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        refreshToken: null,
+      }
+    );
 
     return res.status(200).json({
       success: true,

@@ -30,11 +30,24 @@ const userSchema = new mongoose.Schema(
                 "recruiter",
                 "candidate",
             ],
-            default: "Candidate",
+            default: "candidate",
         },
-
         refreshToken: {
             type: String,
+            default: null,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+
+        verificationToken: {
+            type: String,
+            default: null,
+        },
+
+        verificationTokenExpire: {
+            type: Date,
             default: null,
         },
     },

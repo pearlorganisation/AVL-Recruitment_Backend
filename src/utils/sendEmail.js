@@ -23,6 +23,12 @@ const sendEmail = async ({ to, subject, text, html }) => {
         console.log("Email send successfully please check your inbox", info.messageId);
     }
     catch (error) {
-        console.log("Email is not sent due to error", error);
+        console.log(
+            "Email is not sent due to error",
+            error
+        );
+
+        throw error;
     }
 }
+export default sendEmail;

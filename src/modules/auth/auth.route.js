@@ -6,12 +6,15 @@ import {
     loginUser,
     refreshAccessToken,
     logoutUser,
+    verifyEmail,
 } from "./auth.controller.js";
 
 
 const router = express.Router();
 
 router.post("/register", registerUser);
+
+router.get("/verify-email/:token",verifyEmail);
 
 router.post("/login", loginUser);
 
@@ -22,7 +25,7 @@ router.post("/logout",protect,logoutUser);
 router.get(
     "/admin",
     protect,
-    authorizeRoles("Admin"),
+    authorizeRoles("admin"),
     (req, res) => {
         res.json({
             message: "Admin Access Granted",
