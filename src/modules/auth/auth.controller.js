@@ -4,6 +4,7 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/generateT
 import jwt from "jsonwebtoken";
 import sendEmail from "../../utils/sendEmail.js";
 import crypto from "crypto";
+import { verificationEmailTemplate } from "../../utils/emailTemplates.js";
 
 
 //Register User
@@ -57,19 +58,11 @@ export const registerUser = async (req, res) => {
 
     const verifyUrl =
       `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
-
     await sendEmail({
       to: user.email,
-      subject: "Verify Email",
-      html: `
-    <h2>Email Verification</h2>
-    <p>Please verify your email</p>
-    <a href="${verifyUrl}">
-      Verify Email
-    </a>
-  `,
+      subject: "Verify Your Email - Action Required",
+      html: verificationEmailTemplate(user.name, verifyUrl),
     });
-
     return res.status(201).json({
       success: true,
       message:
@@ -277,6 +270,23 @@ export const logoutUser = async (
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Me (WIAM)
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.status(200).json({
+      success: true,
+      user,
     });
   } catch (error) {
     res.status(500).json({

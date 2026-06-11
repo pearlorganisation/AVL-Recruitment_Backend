@@ -7,6 +7,7 @@ import {
     refreshAccessToken,
     logoutUser,
     verifyEmail,
+    getMe,
 } from "./auth.controller.js";
 
 
@@ -21,6 +22,8 @@ router.post("/login", loginUser);
 router.post("/refresh-token", refreshAccessToken);
 
 router.post("/logout",protect,logoutUser);
+
+router.get("/me", protect, getMe);
 
 router.get(
     "/admin",
